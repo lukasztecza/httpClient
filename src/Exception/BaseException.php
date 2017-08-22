@@ -5,19 +5,11 @@ use RestClient\Exception\ExceptionInterface;
 
 class BaseException extends \Exception implements ExceptionInterface
 {
-    private $message;
-    private $code;
+    protected $message;
+    protected $code;
 
-    public function __construct($message, $code) {
+    public function __construct(string $message, int $code) {
         $this->message = $message;
         $this->code = $code;
-    }
-
-    public function getMessage() {
-        return $this->message;
-    }
-
-    public function getCode() {
-        return $this->code;
     }
 }
