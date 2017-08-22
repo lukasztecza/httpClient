@@ -50,12 +50,12 @@ class ClientFactory
                 case
                     class_exists($this->clients_configuration[$client_name]['type']) &&
                     in_array(ClientInterface::class, class_implements($this->clients_configuration[$client_name]['type']))
-                    : 
+                    :
                     $this->clients[$client_name] = new $client_name['type']();
                     break;
                 default:
                     throw new WrongClientTypeException(
-                        'Unsupported client type: ' . $this->clients_configuration[$client_name]['type'] . 
+                        'Unsupported client type: ' . $this->clients_configuration[$client_name]['type'] .
                         ' for client: ' . $client_name['type'],
                         500
                     );
