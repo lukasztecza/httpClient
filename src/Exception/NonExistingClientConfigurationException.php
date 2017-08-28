@@ -1,12 +1,8 @@
 <?php
 namespace RestClient\Exception;
 
-use RestClient\Exception\BaseException;
+use RestClient\Exception\ExceptionAbstract;
 
-class NonExistingClientConfigurationException extends BaseException
+class NonExistingClientConfigurationException extends ExceptionAbstract
 {
-    public function __construct(string $message = 'Non exsisting client configuration exception', int $code = 500) {
-        $this->message = $message;
-        $this->code = $code;
-    }
 }

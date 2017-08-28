@@ -1,28 +1,13 @@
 <?php
 namespace RestClient\Client;
 
-use RestClient\Client\BaseClient;
-use RestClient\Http\Request;
+use RestClient\Client\ClientAbstract;
 
-class JsonClient extends BaseClient;
+class JsonClient extends ClientAbstract
 {
-    public function get(Request $request) {
 
-    }
-
-    public function post(Request $request) {
-
-    }
-
-    public function put(Request $request) {
-
-    }
-
-    public function patch(Request $request) {
-
-    }
-
-    public function delete(Request $request) {
+    public function __construct()
+    {
 
     }
 }
