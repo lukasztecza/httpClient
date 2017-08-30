@@ -11,6 +11,7 @@ include '../src/Client/ClientAbstract.php';
 include '../src/Client/DefaultClient.php';
 include '../src/Client/JsonClient.php';
 include '../src/Middleware/MiddlewareInterface.php';
+include '../src/Middleware/MiddlewareAbstract.php';
 include '../src/Middleware/CurlMiddleware.php';
 include '../src/Middleware/JsonMiddleware.php';
 include '../src/Middleware/XmlMiddleware.php';

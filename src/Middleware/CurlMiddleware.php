@@ -1,9 +1,9 @@
 <?php
 namespace RestClient\Middleware;
 
-use RestClient\Middleware\MiddlewareInterface;
+use RestClient\Middleware\MiddlewareAbstract;
 
-class CurlMiddleware implements MiddlewareInterface
+class CurlMiddleware extends MiddlewareAbstract
 {
     public function process(array $curlOptArray) : array
     {

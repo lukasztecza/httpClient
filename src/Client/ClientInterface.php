@@ -1,6 +1,8 @@
 <?php
 namespace RestClient\Client;
 
+use RestClient\Middleware\MiddlewareInterface;
+
 interface ClientInterface
 {
     const PARAMETER_URI = 'uri';
@@ -14,6 +16,7 @@ interface ClientInterface
     const DEFAULT_CONNECTION_TIMEOUT = 5;
     const DEFAULT_TIMEOUT = 5;
 
+    public function __construct(string $uri, MiddlewareInterface $currentMiddleware, int $connectTimeout, int $timeout);
     public function get(array $resource = [], array $query = [], array $headers = []) : array;
     public function post(array $resource = [], array $query = [], array $headers = [], array $payload = []) : array;
     public function put(array $resource = [], array $query = [], array $headers = [], array $payload = []) : array;

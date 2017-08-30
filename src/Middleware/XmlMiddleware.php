@@ -1,17 +1,10 @@
 <?php
 namespace RestClient\Middleware;
 
-use RestClient\Middleware\MiddlewareInterface;
+use RestClient\Middleware\MiddlewareAbstract;
 
-class XmlMiddleware implements MiddlewareInterface
+class XmlMiddleware extends MiddlewareAbstract
 {
-    private $next;
-
-    public function __construct(MiddlewareInterface $next)
-    {
-        $this->next = $next;
-    }
-
     public function process(array $curlOptArray) : array
     {
         $response = $this->next->process($curlOptArray);
