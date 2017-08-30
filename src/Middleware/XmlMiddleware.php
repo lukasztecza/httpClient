@@ -3,7 +3,7 @@ namespace RestClient\Middleware;
 
 use RestClient\Middleware\MiddlewareInterface;
 
-class JsonMiddleware implements MiddlewareInterface
+class XmlMiddleware implements MiddlewareInterface
 {
     private $next;
 
@@ -15,7 +15,7 @@ class JsonMiddleware implements MiddlewareInterface
     public function process(array $curlOptArray) : array
     {
         $response = $this->next->process($curlOptArray);
-        $response['json'] = 'ok';
+        $response['xml'] = 'ok';
         return $response;
     }
 }
