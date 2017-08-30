@@ -2,6 +2,8 @@
 namespace RestClient;
 
 use RestClient\Client\ClientInterface;
+use RestClient\Middleware\MiddlewareInterface;
+use RestClient\Middleware\CurlMiddleware;
 use RestClient\Exception\WrongConfigurationException;
 use RestClient\Exception\NonExistingClientConfigurationException;
 
@@ -100,13 +102,20 @@ class ClientFactory
         }
 
         if (!isset($this->clients[$clientName][ClientInterface::PARAMETER_CLIENT])) {
+            $currentMiddleware = new CurlMiddleware();
+            $middlewaresArrayLength = count($this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES_ARRAY]);
+            while ($middlewaresArrayLength--) {
+                $middleware = new $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES_ARRAY][$middlewaresArrayLength]($currentMiddleware);
+                $currentMiddleware = $middleware;
+            }
             $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT] = new $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT_CLASS](
                 $this->clients[$clientName][ClientInterface::PARAMETER_URI],
-                $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES_ARRAY],
+                $currentMiddleware,
                 $this->clients[$clientName][ClientInterface::PARAMETER_CONNECTION_TIMEOUT],
                 $this->clients[$clientName][ClientInterface::PARAMETER_TIMEOUT]
             );
         }
+
         return $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT];
     }
 }
