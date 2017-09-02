@@ -9,6 +9,17 @@ use RestClient\Exception\NonExistingClientConfigurationException;
 
 class ClientFactory
 {
+    const PARAMETER_URI = 'uri';
+    const PARAMETER_CLIENT_CLASS = 'clientClass';
+    const PARAMETER_MIDDLEWARES_ARRAY = 'middlewaresArray';
+    const PARAMETER_CONNECTION_TIMEOUT = 'connectionTimeout';
+    const PARAMETER_TIMEOUT = 'timeout';
+    const PARAMETER_CLIENT = 'client';
+
+    const DEFAULT_CLIENT_CLASS = 'RestClient\Client\DefaultClient';
+    const DEFAULT_CONNECTION_TIMEOUT = 5;
+    const DEFAULT_TIMEOUT = 5;
+
     private $clientsConfiguration;
     private $clients;
 
@@ -17,38 +28,38 @@ class ClientFactory
         foreach ($clientsConfiguration as $clientName => $configuration) {
             if (
                 !is_array($configuration) ||
-                !isset($configuration[ClientInterface::PARAMETER_URI]) ||
-                !is_string($configuration[ClientInterface::PARAMETER_URI])
+                !isset($configuration[static::PARAMETER_URI]) ||
+                !is_string($configuration[static::PARAMETER_URI])
             ) {
                 throw new WrongConfigurationException(
-                    'Wrong configuration exception, ' . ClientInterface::PARAMETER_URI . ' not specified for client: ' . $clientName
+                    'Wrong configuration exception, ' . static::PARAMETER_URI . ' not specified for client: ' . $clientName
                 );
             }
-            $this->clients[$clientName] = [ClientInterface::PARAMETER_URI => $configuration[ClientInterface::PARAMETER_URI]];
+            $this->clients[$clientName] = [static::PARAMETER_URI => $configuration[static::PARAMETER_URI]];
 
             if (
-                isset($configuration[ClientInterface::PARAMETER_CLIENT_CLASS])
+                isset($configuration[static::PARAMETER_CLIENT_CLASS])
             ) {
                 if (
-                    !is_string($configuration[ClientInterface::PARAMETER_CLIENT_CLASS]) ||
-                    !class_exists($configuration[ClientInterface::PARAMETER_CLIENT_CLASS]) ||
-                    !in_array(ClientInterface::class, class_implements($configuration[ClientInterface::PARAMETER_CLIENT_CLASS]))
+                    !is_string($configuration[static::PARAMETER_CLIENT_CLASS]) ||
+                    !class_exists($configuration[static::PARAMETER_CLIENT_CLASS]) ||
+                    !in_array(ClientInterface::class, class_implements($configuration[static::PARAMETER_CLIENT_CLASS]))
                 ) {
                     throw new WrongConfigurationException(
-                        'Wrong configuration exception, ' . var_export($configuration[ClientInterface::PARAMETER_CLIENT_CLASS], true) .
+                        'Wrong configuration exception, ' . var_export($configuration[static::PARAMETER_CLIENT_CLASS], true) .
                         ' does not exist or does not implement ' . ClientInterface::class
                     );
                 }
-                $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT_CLASS] = $configuration[ClientInterface::PARAMETER_CLIENT_CLASS];
+                $this->clients[$clientName][static::PARAMETER_CLIENT_CLASS] = $configuration[static::PARAMETER_CLIENT_CLASS];
             } else {
-                $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT_CLASS] = ClientInterface::DEFAULT_CLIENT_CLASS;
+                $this->clients[$clientName][static::PARAMETER_CLIENT_CLASS] = static::DEFAULT_CLIENT_CLASS;
             }
 
             if (
-                isset($configuration[ClientInterface::PARAMETER_MIDDLEWARES_ARRAY]) &&
-                is_array($configuration[ClientInterface::PARAMETER_MIDDLEWARES_ARRAY])
+                isset($configuration[static::PARAMETER_MIDDLEWARES_ARRAY]) &&
+                is_array($configuration[static::PARAMETER_MIDDLEWARES_ARRAY])
             ) {
-                foreach ($configuration[ClientInterface::PARAMETER_MIDDLEWARES_ARRAY] as $middlewareClass) {
+                foreach ($configuration[static::PARAMETER_MIDDLEWARES_ARRAY] as $middlewareClass) {
                     if (
                         !is_string($middlewareClass) ||
                         !class_exists($middlewareClass) ||
@@ -60,37 +71,37 @@ class ClientFactory
                         );
                     }
                 }
-                $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES_ARRAY] = $configuration[ClientInterface::PARAMETER_MIDDLEWARES_ARRAY];
+                $this->clients[$clientName][static::PARAMETER_MIDDLEWARES_ARRAY] = $configuration[static::PARAMETER_MIDDLEWARES_ARRAY];
             } else {
-                $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES_ARRAY] = [];
+                $this->clients[$clientName][static::PARAMETER_MIDDLEWARES_ARRAY] = [static::CURL_MIDDLEWARE_CLASS];
             }
 
             if (
-                isset($configuration[ClientInterface::PARAMETER_CONNECTION_TIMEOUT])
+                isset($configuration[static::PARAMETER_CONNECTION_TIMEOUT])
             ) {
-                if (!is_int($configuration[ClientInterface::PARAMETER_CONNECTION_TIMEOUT])) {
+                if (!is_int($configuration[static::PARAMETER_CONNECTION_TIMEOUT])) {
                     throw new WrongConfigurationException(
-                        'Wrong configuration exception, ' . var_export($configuration[ClientInterface::PARAMETER_CONNECTION_TIMEOUT]) . ' is not int'
+                        'Wrong configuration exception, ' . var_export($configuration[static::PARAMETER_CONNECTION_TIMEOUT]) . ' is not int'
                     );
                 }
-                $this->clients[$clientName][ClientInterface::PARAMETER_CONNECTION_TIMEOUT] = $configuration[
-                    ClientInterface::PARAMETER_CONNECTION_TIMEOUT
+                $this->clients[$clientName][static::PARAMETER_CONNECTION_TIMEOUT] = $configuration[
+                    static::PARAMETER_CONNECTION_TIMEOUT
                 ];
             } else {
-                $this->clients[$clientName][ClientInterface::PARAMETER_CONNECTION_TIMEOUT] = ClientInterface::DEFAULT_CONNECTION_TIMEOUT;
+                $this->clients[$clientName][static::PARAMETER_CONNECTION_TIMEOUT] = static::DEFAULT_CONNECTION_TIMEOUT;
             }
 
             if (
-                isset($configuration[ClientInterface::PARAMETER_TIMEOUT])
+                isset($configuration[static::PARAMETER_TIMEOUT])
             ) {
-                if (!is_int($configuration[ClientInterface::PARAMETER_TIMEOUT])) {
+                if (!is_int($configuration[static::PARAMETER_TIMEOUT])) {
                     throw new WrongConfigurationException(
-                        'Wrong configuration exception, ' . var_export($configuration[ClientInterface::PARAMETER_TIMEOUT]) . ' is not int'
+                        'Wrong configuration exception, ' . var_export($configuration[static::PARAMETER_TIMEOUT]) . ' is not int'
                     );
                 }
-                $this->clients[$clientName][ClientInterface::PARAMETER_TIMEOUT] = $configuration[ClientInterface::PARAMETER_TIMEOUT];
+                $this->clients[$clientName][static::PARAMETER_TIMEOUT] = $configuration[static::PARAMETER_TIMEOUT];
             } else {
-                $this->clients[$clientName][ClientInterface::PARAMETER_TIMEOUT] = ClientInterface::DEFAULT_TIMEOUT;
+                $this->clients[$clientName][static::PARAMETER_TIMEOUT] = static::DEFAULT_TIMEOUT;
             }
         }
     }
@@ -101,21 +112,21 @@ class ClientFactory
             throw new NonExistingClientConfigurationException('Client configuration does not exists for client: ' . $clientName);
         }
 
-        if (!isset($this->clients[$clientName][ClientInterface::PARAMETER_CLIENT])) {
+        if (!isset($this->clients[$clientName][static::PARAMETER_CLIENT])) {
             $currentMiddleware = new CurlMiddleware();
-            $middlewaresArrayLength = count($this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES_ARRAY]);
+            $middlewaresArrayLength = count($this->clients[$clientName][static::PARAMETER_MIDDLEWARES_ARRAY]);
             while ($middlewaresArrayLength--) {
-                $middleware = new $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES_ARRAY][$middlewaresArrayLength]($currentMiddleware);
+                $middleware = new $this->clients[$clientName][static::PARAMETER_MIDDLEWARES_ARRAY][$middlewaresArrayLength]($currentMiddleware);
                 $currentMiddleware = $middleware;
             }
-            $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT] = new $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT_CLASS](
-                $this->clients[$clientName][ClientInterface::PARAMETER_URI],
+            $this->clients[$clientName][static::PARAMETER_CLIENT] = new $this->clients[$clientName][static::PARAMETER_CLIENT_CLASS](
+                $this->clients[$clientName][static::PARAMETER_URI],
                 $currentMiddleware,
-                $this->clients[$clientName][ClientInterface::PARAMETER_CONNECTION_TIMEOUT],
-                $this->clients[$clientName][ClientInterface::PARAMETER_TIMEOUT]
+                $this->clients[$clientName][static::PARAMETER_CONNECTION_TIMEOUT],
+                $this->clients[$clientName][static::PARAMETER_TIMEOUT]
             );
         }
 
-        return $this->clients[$clientName][ClientInterface::PARAMETER_CLIENT];
+        return $this->clients[$clientName][static::PARAMETER_CLIENT];
     }
 }
