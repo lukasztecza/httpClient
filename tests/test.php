@@ -19,20 +19,20 @@ include '../src/Middleware/XmlMiddleware.php';
 use RestClient\ClientFactory;
 
 $client_configuration = [
-    'clientloc' => [
+/*    'clientloc' => [
         'uri' => 'htpp://localhost',
-        'middlewaresArray' => ['RestClient\Middleware\JsonMiddleware'],
+        'middlewaresArray' => [['middlewareClass' => 'RestClient\Middleware\JsonMiddleware', 'middlewareOptions' => ['onlyResponse' => true]]],
         'class' => 'RestClient\Client\JsonClient',
         'timeout' => 10,
         'connectionTimeout' => 15
-    ],
+    ],*/
     'clientluk' => [
         'uri' => 'http://lukasztecza.pl',
         'middlewaresArray' => [
-            'RestClient\Middleware\JsonMiddleware',
-            'RestClient\Middleware\XmlMiddleware',
-        ],
-    ],
+            ['middlewareClass' => 'RestClient\Middleware\JsonMiddleware'],
+            ['middlewareClass' => 'RestClient\Middleware\XmlMiddleware', 'middlewareOptions' => ['onlyResponse' => true]]
+        ]
+    ]
 ];
 
 $client_factory = new ClientFactory($client_configuration);

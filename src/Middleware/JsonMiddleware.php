@@ -8,7 +8,7 @@ class JsonMiddleware extends MiddlewareAbstract
     public function process(array $curlOptArray) : array
     {
         $response = $this->next->process($curlOptArray);
-        $response['json'] = 'ok';
+        $response['json'] = $this->options;
         return $response;
     }
 }
