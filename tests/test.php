@@ -28,9 +28,14 @@ $client_configuration = [
     ],*/
     'clientluk' => [
         'uri' => 'http://lukasztecza.pl',
-        'middlewaresArray' => [
-            ['middlewareClass' => 'RestClient\Middleware\JsonMiddleware'],
-            ['middlewareClass' => 'RestClient\Middleware\XmlMiddleware', 'middlewareOptions' => ['onlyResponse' => true]]
+        'class' => 'RestClient\Client\DefaultClient',
+        'options' => [
+            'connectionTimeout' => 20,
+            'timeout' => 10
+        ],
+        'middlewares' => [
+            ['class' => 'RestClient\Middleware\JsonMiddleware'],
+            ['class' => 'RestClient\Middleware\XmlMiddleware', 'options' => ['onlyResponse' => true]]
         ]
     ]
 ];
