@@ -149,8 +149,6 @@ abstract class ClientAbstract implements ClientInterface
                 break;
         }
 
-var_dump($curlOptionsArray);
-exit;
         return $this->currentMiddleware->process($curlOptionsArray);
     }
 

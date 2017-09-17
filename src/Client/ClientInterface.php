@@ -11,6 +11,7 @@ interface ClientInterface
     const PARAMETER_MIDDLEWARES = 'middlewares';
     const PARAMETER_CONNECTION_TIMEOUT = 'connectionTimeout';
     const PARAMETER_TIMEOUT = 'timeout';
+    const PARAMETER_ENCODE_REQUEST = 'encodeRequest';
 
     const DEFAULT_CLIENT_CLASS = 'RestClient\Client\DefaultClient';
     const CURL_MIDDLEWARE_CLASS = 'RestClient\Middleware\CurlMiddleware';

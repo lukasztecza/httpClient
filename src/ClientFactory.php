@@ -89,8 +89,18 @@ class ClientFactory
                             ' middleware options is set but is not array '
                         );
                     }
+                    if (isset($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST])) {
+                        if (!is_bool($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST])) {
+                            throw new WrongConfigurationException(
+                                'Wrong configuration exception, '  . var_export($middlewareEntry[ClientInterface::PARAMETER_OPTIONS], true) .
+                                ' middleware options ' . ClientInterface::PARAMETER_ENCODE_REQUEST . ' is set but is not boolean '
+                            );
+                        }
+                    } else {
+                        $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST] = true;
+                    }
                 } else {
-                    $middlewareEntry[ClientInterface::PARAMETER_OPTIONS] = [];
+                    $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST] = true;
                 }
             }
             $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES] = $configuration[ClientInterface::PARAMETER_MIDDLEWARES];
