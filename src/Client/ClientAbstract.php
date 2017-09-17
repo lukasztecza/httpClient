@@ -10,15 +10,13 @@ abstract class ClientAbstract implements ClientInterface
 {
     protected $uri;
     protected $currentMiddleware;
-    protected $connectTimeout;
-    protected $timeout;
+    protected $options;
 
-    public function __construct(string $uri, MiddlewareInterface $currentMiddleware, int $connectTimeout, int $timeout)
+    public function __construct(string $uri, MiddlewareInterface $currentMiddleware, array $options)
     {
         $this->uri = $uri;
         $this->currentMiddleware = $currentMiddleware;
-        $this->connectTimeout = $connectTimeout;
-        $this->timeout = $timeout;
+        $this->options = $options;
     }
 
     public function get(array $resource = [], array $query = [], array $headers = []) : array
@@ -76,6 +74,7 @@ abstract class ClientAbstract implements ClientInterface
 
     protected function buildResource(array $resource = []) : string
     {
+        $resource = $this->getClientResource() + $resource;
         $resourceString = '';
         foreach ($resource as $key => $value) {
             if (is_string($key) && is_string($value)) {
@@ -91,16 +90,19 @@ abstract class ClientAbstract implements ClientInterface
 
     protected function buildQuery(array $query) : string
     {
+        $query = $this->getClientQuery() + $query;
         return (string) http_build_query($query);
     }
 
     protected function buildPayload(array $payload) : array
     {
+        $payload = $this->getClientPayload() + $payload;
         return $payload;
     }
 
     protected function buildHeaders(array $headers) : array
     {
+        $headers = $this->getClientHeaders() + $headers;
         $headersArray = [];
         foreach ($headers as $key => $value) {
             if (is_string($key) && is_string($value)) {
@@ -114,27 +116,47 @@ abstract class ClientAbstract implements ClientInterface
 
     protected function prepareAndCall(string $verb, string $resourceString, string $queryString, array $headersArray, array $payloadArray = []) : array
     {
-        $curlOptArray = [
+        $curlOptionsArray = [
             CURLOPT_URL => $this->uri . $resourceString . '?' . $queryString,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => $headersArray,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION =>  true
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_CONNECTTIMEOUT => $this->options[ClientInterface::PARAMETER_CONNECTION_TIMEOUT],
+            CURLOPT_TIMEOUT => $this->options[ClientInterface::PARAMETER_TIMEOUT]
         ];
+        $curlOptionsArray = $this->getClientCurlOptions() + $curlOptionsArray;
+
+        $maxExecutionTime = (int)ini_get('max_execution_time');
+        $combinedCurlTime = $this->options[ClientInterface::PARAMETER_CONNECTION_TIMEOUT] + $this->options[ClientInterface::PARAMETER_TIMEOUT];
+        if (
+            $maxExecutionTime !== 0 &&
+            $maxExecutionTime < $combinedCurlTime
+        ) {
+            ini_set('max_execution_time', $combinedCurlTime + $maxExecutionTime);
+        }
 
         switch ($verb) {
             case 'POST':
-                $curlOptArray[CURLOPT_POST] = true;
-                $curlOptArray[CURLOPT_POSTFIELDS] = $payloadArray;
+                $curlOptionsArray[CURLOPT_POST] = true;
+                $curlOptionsArray[CURLOPT_POSTFIELDS] = $payloadArray;
                 break;
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-                $curlOptArray[CURLOPT_CUSTOMREQUEST] = $verb;
-                $curlOptArray[CURLOPT_POSTFIELDS] = $payloadArray;
+                $curlOptionsArray[CURLOPT_CUSTOMREQUEST] = $verb;
+                $curlOptionsArray[CURLOPT_POSTFIELDS] = $payloadArray;
                 break;
         }
 
-        return $this->currentMiddleware->process($curlOptArray);
+var_dump($curlOptionsArray);
+exit;
+        return $this->currentMiddleware->process($curlOptionsArray);
     }
+
+    abstract protected function getClientResource() : array;
+    abstract protected function getClientQuery() : array;
+    abstract protected function getClientHeaders() : array;
+    abstract protected function getClientPayload() : array;
+    abstract protected function getClientCurlOptions() : array;
 }

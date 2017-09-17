@@ -14,5 +14,5 @@ abstract class MiddlewareAbstract implements MiddlewareInterface
         $this->options = $options;
     }
 
-    abstract public function process(array $curlOptArray) : array;
+    abstract public function process(array $curlOptionsArray) : array;
 }

@@ -9,7 +9,6 @@ include '../src/Exception/WrongConfigurationException.php';
 include '../src/Exception/WrongResourceException.php';
 include '../src/Client/ClientAbstract.php';
 include '../src/Client/DefaultClient.php';
-include '../src/Client/JsonClient.php';
 include '../src/Middleware/MiddlewareInterface.php';
 include '../src/Middleware/MiddlewareAbstract.php';
 include '../src/Middleware/CurlMiddleware.php';
@@ -31,7 +30,8 @@ $client_configuration = [
         'class' => 'RestClient\Client\DefaultClient',
         'options' => [
             'connectionTimeout' => 20,
-            'timeout' => 10
+            'timeout' => 10,
+            'blah' => 'wtf option mine'
         ],
         'middlewares' => [
             ['class' => 'RestClient\Middleware\JsonMiddleware'],
@@ -46,6 +46,7 @@ $client_factory = new ClientFactory($client_configuration);
 //var_dump($client_factory->getClient('test_client'), $client_factory->getClient('some_client'));exit;
 //echo PHP_EOL . 'done' . PHP_EOL;
 
+//@TODO create xml middleware
 var_dump($client_factory->getClient('clientluk')->post(
     ['resource1' => 5, 'resource2' => 3],
     ['query1' => 'test1', 'query2' => 34],

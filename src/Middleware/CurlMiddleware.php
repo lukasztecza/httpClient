@@ -5,10 +5,10 @@ use RestClient\Middleware\MiddlewareAbstract;
 
 class CurlMiddleware extends MiddlewareAbstract
 {
-    public function process(array $curlOptArray) : array
+    public function process(array $curlOptionsArray) : array
     {
         $curlSession = curl_init();
-        curl_setopt_array($curlSession, $curlOptArray);
+        curl_setopt_array($curlSession, $curlOptionsArray);
         $rawResponse = curl_exec($curlSession);
         $info = curl_getinfo($curlSession);
         curl_close($curlSession);
