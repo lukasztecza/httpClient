@@ -1,21 +1,23 @@
 <?php
 namespace RestClient\Middleware;
 
-use RestClient\Middleware\MiddlewareInterface;
+use RestClient\Middleware\MiddlewareAbstract;
+use RestClient\Client\ClientInterface;
 
-class JsonMiddleware implements MiddlewareInterface
+class JsonMiddleware extends MiddlewareAbstract
 {
-    private $next;
-
-    public function __construct(MiddlewareInterface $next)
+    public function process(array $curlOptionsArray) : array
     {
-        $this->next = $next;
-    }
+        if ($this->options[ClientInterface::PARAMETER_ENCODE_REQUEST]) {
+            $curlOptionsArray[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
+            if (isset($curlOptionsArray[CURLOPT_POSTFIELDS])) {
+                $curlOptionsArray[CURLOPT_POSTFIELDS] = json_encode($curlOptionsArray[CURLOPT_POSTFIELDS]);
+            }
+        }
 
-    public function process(array $curlOptArray) : array
-    {
-        $response = $this->next->process($curlOptArray);
-        $response['json'] = 'ok';
+        $response = $this->next->process($curlOptionsArray);
+
+        $response['body'] = json_decode($response['body'], true);
         return $response;
     }
 }

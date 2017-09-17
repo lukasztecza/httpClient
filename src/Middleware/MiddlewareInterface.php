@@ -3,5 +3,6 @@ namespace RestClient\Middleware;
 
 interface MiddlewareInterface
 {
-    public function process(array $curlOptArray) : array;
+    public function __construct(MiddlewareInterface $next = null, array $options = []);
+    public function process(array $curlOptionsArray) : array;
 }
