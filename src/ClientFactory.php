@@ -17,7 +17,7 @@ class ClientFactory
             $this->configureUri($clientName, $configuration);
             $this->configureClass($clientName, $configuration);
             $this->configureMiddlewares($clientName, $configuration);
-            $this->configureOptions($clientName, $configuration);
+            $this->configureClientOptions($clientName, $configuration);
         }
     }
 
@@ -37,9 +37,7 @@ class ClientFactory
 
     private function configureClass(string $clientName, array $configuration)
     {
-        if (
-            isset($configuration[ClientInterface::PARAMETER_CLASS])
-        ) {
+        if (isset($configuration[ClientInterface::PARAMETER_CLASS])) {
             if (
                 !is_string($configuration[ClientInterface::PARAMETER_CLASS]) ||
                 !class_exists($configuration[ClientInterface::PARAMETER_CLASS]) ||
@@ -47,7 +45,7 @@ class ClientFactory
             ) {
                 throw new WrongConfigurationException(
                     'Wrong configuration exception, ' . var_export($configuration[ClientInterface::PARAMETER_CLASS], true) .
-                    ' does not exist or does not implement ' . ClientInterface::class
+                    ' class does not exist or does not implement ' . ClientInterface::class
                 );
             }
             $this->clients[$clientName][ClientInterface::PARAMETER_CLASS] = $configuration[ClientInterface::PARAMETER_CLASS];
@@ -56,13 +54,16 @@ class ClientFactory
         }
     }
 
-
     private function configureMiddlewares(string $clientName, array $configuration)
     {
-        if (
-            isset($configuration[ClientInterface::PARAMETER_MIDDLEWARES]) &&
-            is_array($configuration[ClientInterface::PARAMETER_MIDDLEWARES])
-        ) {
+        if (isset($configuration[ClientInterface::PARAMETER_MIDDLEWARES])) {
+            if (!is_array($configuration[ClientInterface::PARAMETER_MIDDLEWARES])) {
+                throw new WrongConfigurationException(
+                    'Wrong configuration exception, parameter '  . ClientInterface::PARAMETER_MIDDLEWARES .
+                    ' is set but is not array'
+                );
+            }
+
             foreach ($configuration[ClientInterface::PARAMETER_MIDDLEWARES] as &$middlewareEntry) {
                 if (!isset($middlewareEntry[ClientInterface::PARAMETER_CLASS])) {
                     throw new WrongConfigurationException(
@@ -82,36 +83,73 @@ class ClientFactory
                     );
                 }
 
-                if (isset($middlewareEntry[ClientInterface::PARAMETER_OPTIONS])) {
-                    if (!is_array($middlewareEntry[ClientInterface::PARAMETER_OPTIONS])) {
-                        throw new WrongConfigurationException(
-                            'Wrong configuration exception, '  . var_export($middlewareEntry[ClientInterface::PARAMETER_OPTIONS], true) .
-                            ' middleware options is set but is not array '
-                        );
-                    }
-                    if (isset($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST])) {
-                        if (!is_bool($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST])) {
-                            throw new WrongConfigurationException(
-                                'Wrong configuration exception, '  . var_export($middlewareEntry[ClientInterface::PARAMETER_OPTIONS], true) .
-                                ' middleware options ' . ClientInterface::PARAMETER_ENCODE_REQUEST . ' is set but is not boolean '
-                            );
-                        }
-                    } else {
-                        $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST] = true;
-                    }
-                } else {
-                    $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST] = true;
-                }
+                $this->configureMiddlewareOptions($middlewareEntry);
             }
+
             $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES] = $configuration[ClientInterface::PARAMETER_MIDDLEWARES];
         }
+
         $this->clients[$clientName][ClientInterface::PARAMETER_MIDDLEWARES][] = [
             ClientInterface::PARAMETER_CLASS => ClientInterface::CURL_MIDDLEWARE_CLASS,
             ClientInterface::PARAMETER_OPTIONS => []
         ];
     }
 
-    private function configureOptions(string $clientName, array $configuration)
+    private function configureMiddlewareOptions(&$middlewareEntry)
+    {
+        if (isset($middlewareEntry[ClientInterface::PARAMETER_OPTIONS])) {
+            if (!is_array($middlewareEntry[ClientInterface::PARAMETER_OPTIONS])) {
+                throw new WrongConfigurationException(
+                    'Wrong configuration exception, '  . var_export($middlewareEntry[ClientInterface::PARAMETER_OPTIONS], true) .
+                    ' middleware options is set but is not array '
+                );
+            }
+
+            if (
+                $middlewareEntry[ClientInterface::PARAMETER_CLASS] === ClientInterface::JSON_MIDDLEWARE_CLASS ||
+                $middlewareEntry[ClientInterface::PARAMETER_CLASS] === ClientInterface::XML_MIDDLEWARE_CLASS
+            ) {
+                if (isset($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST])) {
+                    if (!is_bool($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST])) {
+                        throw new WrongConfigurationException(
+                            'Wrong configuration exception, '  . var_export($middlewareEntry[ClientInterface::PARAMETER_OPTIONS], true) .
+                            ' middleware option ' . ClientInterface::PARAMETER_ENCODE_REQUEST . ' is set but is not boolean'
+                        );
+                    }
+                } else {
+                    $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST] = true;
+                }
+            }
+
+            if ($middlewareEntry[ClientInterface::PARAMETER_CLASS] === ClientInterface::XML_MIDDLEWARE_CLASS) {
+                if (isset($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ROOT_NODE])) {
+                    if (!is_string($middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ROOT_NODE])) {
+                        throw new WrongConfigurationException(
+                            'Wrong configuration exception, '  . var_export($middlewareEntry[ClientInterface::PARAMETER_OPTIONS], true) .
+                            ' middleware option ' . ClientInterface::PARAMETER_ROOT_NODE . ' is set but is not string'
+                        );
+                    }
+                } else {
+                    $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ROOT_NODE] = 'Request';
+                }
+            }
+        } else {
+            $middlewareEntry[ClientInterface::PARAMETER_OPTIONS] = [];
+
+            if (
+                $middlewareEntry[ClientInterface::PARAMETER_CLASS] === ClientInterface::JSON_MIDDLEWARE_CLASS ||
+                $middlewareEntry[ClientInterface::PARAMETER_CLASS] === ClientInterface::XML_MIDDLEWARE_CLASS
+            ) {
+                $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ENCODE_REQUEST] = true;
+            }
+
+            if ($middlewareEntry[ClientInterface::PARAMETER_CLASS] === ClientInterface::XML_MIDDLEWARE_CLASS) {
+                $middlewareEntry[ClientInterface::PARAMETER_OPTIONS][ClientInterface::PARAMETER_ROOT_NODE] = 'Request';
+            }
+        }
+    }
+
+    private function configureClientOptions(string $clientName, array $configuration)
     {
         if (
             isset($configuration[ClientInterface::PARAMETER_OPTIONS]) &&
@@ -119,7 +157,7 @@ class ClientFactory
         ) {
             throw new WrongConfigurationException(
                 'Wrong configuration exception, '  . var_export($configuration[ClientInterface::PARAMETER_OPTIONS], true) .
-                ' client options is set but is not array '
+                ' client options is set but is not array'
             );
         }
 

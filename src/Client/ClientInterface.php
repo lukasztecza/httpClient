@@ -12,9 +12,12 @@ interface ClientInterface
     const PARAMETER_CONNECTION_TIMEOUT = 'connectionTimeout';
     const PARAMETER_TIMEOUT = 'timeout';
     const PARAMETER_ENCODE_REQUEST = 'encodeRequest';
+    const PARAMETER_ROOT_NODE = 'rootNode';
 
     const DEFAULT_CLIENT_CLASS = 'RestClient\Client\DefaultClient';
     const CURL_MIDDLEWARE_CLASS = 'RestClient\Middleware\CurlMiddleware';
+    const JSON_MIDDLEWARE_CLASS = 'RestClient\Middleware\JsonMiddleware';
+    const XML_MIDDLEWARE_CLASS = 'RestClient\Middleware\XmlMiddleware';
     const DEFAULT_CONNECTION_TIMEOUT = 5;
     const DEFAULT_TIMEOUT = 5;
     const CLIENT_OBJECT = 'client';

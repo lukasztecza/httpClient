@@ -14,6 +14,7 @@ include '../src/Middleware/MiddlewareAbstract.php';
 include '../src/Middleware/CurlMiddleware.php';
 include '../src/Middleware/JsonMiddleware.php';
 include '../src/Middleware/XmlMiddleware.php';
+include '../src/Middleware/SomeMiddleware.php';
 
 use RestClient\ClientFactory;
 
@@ -34,8 +35,7 @@ $client_configuration = [
             'blah' => 'wtf option mine'
         ],
         'middlewares' => [
-            ['class' => 'RestClient\Middleware\JsonMiddleware'],
-            ['class' => 'RestClient\Middleware\XmlMiddleware', 'options' => ['onlyResponse' => true]]
+            ['class' => 'RestClient\Middleware\SomeMiddleware']
         ]
     ]
 ];
