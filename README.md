@@ -1,2 +1,2 @@
-# restClient
-Rest http client using curl based on middleware pattern
+# httpClient
+Http client using curl based on middleware and factory patterns.

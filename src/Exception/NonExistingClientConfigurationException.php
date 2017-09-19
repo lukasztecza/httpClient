@@ -1,7 +1,7 @@
 <?php
-namespace RestClient\Exception;
+namespace HttpClient\Exception;
 
-use RestClient\Exception\ExceptionAbstract;
+use HttpClient\Exception\ExceptionAbstract;
 
 class NonExistingClientConfigurationException extends ExceptionAbstract
 {

@@ -1,5 +1,5 @@
 <?php
-namespace RestClient\Exception;
+namespace HttpClient\Exception;
 
 interface ExceptionInterface
 {

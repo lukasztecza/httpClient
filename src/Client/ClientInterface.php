@@ -1,31 +1,19 @@
 <?php
-namespace RestClient\Client;
+namespace HttpClient\Client;
 
-use RestClient\Middleware\MiddlewareInterface;
+use HttpClient\Middleware\MiddlewareInterface;
 
 interface ClientInterface
 {
-    const PARAMETER_URI = 'uri';
-    const PARAMETER_CLASS = 'class';
-    const PARAMETER_OPTIONS = 'options';
-    const PARAMETER_MIDDLEWARES = 'middlewares';
-    const PARAMETER_CONNECTION_TIMEOUT = 'connectionTimeout';
-    const PARAMETER_TIMEOUT = 'timeout';
-    const PARAMETER_ENCODE_REQUEST = 'encodeRequest';
-    const PARAMETER_ROOT_NODE = 'rootNode';
-
-    const DEFAULT_CLIENT_CLASS = 'RestClient\Client\DefaultClient';
-    const CURL_MIDDLEWARE_CLASS = 'RestClient\Middleware\CurlMiddleware';
-    const JSON_MIDDLEWARE_CLASS = 'RestClient\Middleware\JsonMiddleware';
-    const XML_MIDDLEWARE_CLASS = 'RestClient\Middleware\XmlMiddleware';
-    const DEFAULT_CONNECTION_TIMEOUT = 5;
-    const DEFAULT_TIMEOUT = 5;
-    const CLIENT_OBJECT = 'client';
-
     public function __construct(string $uri, MiddlewareInterface $currentMiddleware, array $options);
+
     public function get(array $resource = [], array $query = [], array $headers = []) : array;
+
     public function post(array $resource = [], array $query = [], array $headers = [], array $payload = []) : array;
+
     public function put(array $resource = [], array $query = [], array $headers = [], array $payload = []) : array;
+
     public function patch(array $resource = [], array $query = [], array $headers = [], array $payload = []) : array;
+
     public function delete(array $resource = [], array $query = [], array $headers = []) : array;
 }

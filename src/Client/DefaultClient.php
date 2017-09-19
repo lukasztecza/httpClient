@@ -1,42 +1,32 @@
 <?php
-namespace RestClient\Client;
+namespace HttpClient\Client;
 
-use RestClient\Client\ClientAbstract;
+use HttpClient\Client\ClientAbstract;
 
 class DefaultClient extends ClientAbstract
 {
     protected function getClientCurlOptions() : array
     {
-        return [
-            CURLOPT_HEADER => true
-        ];
+        return [];
     }
 
     protected function getClientResource() : array
     {
-        return [
-            'resource3' => null
-        ];
+        return [];
     }
 
     protected function getClientQuery() : array
     {
-        return [
-            'query3' => 'haha'
-        ];
+        return [];
     }
 
     protected function getClientHeaders() : array
     {
-        return [
-            'Authentication' => 'Bearer 123321' . $this->options['blah']
-        ];
+        return [];
     }
 
     protected function getClientPayload() : array
     {
-        return [
-            'payload3' => 'hey'
-        ];
+        return [];
     }
 }
