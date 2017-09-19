@@ -28,7 +28,7 @@ $client_configuration = [
         ],
         'middlewares' => [
 //            ['class' => 'HttpClient\Middleware\JsonMiddleware'],
-            ['class' => 'HttpClient\Middleware\XmlMiddleware']
+//            ['class' => 'HttpClient\Middleware\XmlMiddleware']
         ]
     ]
 ];
