@@ -1,13 +1,19 @@
 <?php
-namespace RestClient\Client;
+namespace HttpClient\Client;
 
-use RestClient\Client\ClientInterface;
-use RestClient\Middleware\MiddlewareInterface;
-use Request\Exception\WrongResourceException;
-use Request\Exception\WrongHeadersException;
+use HttpClient\Client\ClientInterface;
+use HttpClient\Middleware\MiddlewareInterface;
+use HttpClient\Exception\WrongResourceException;
+use HttpClient\Exception\WrongHeadersException;
 
 abstract class ClientAbstract implements ClientInterface
 {
+    const PARAMETER_CONNECTION_TIMEOUT = 'connectionTimeout';
+    const PARAMETER_TIMEOUT = 'timeout';
+
+    const DEFAULT_CONNECTION_TIMEOUT = 5;
+    const DEFAULT_TIMEOUT = 5;
+
     protected $uri;
     protected $currentMiddleware;
     protected $options;
@@ -108,7 +114,7 @@ abstract class ClientAbstract implements ClientInterface
             if (is_string($key) && is_string($value)) {
                 $headersArray[] .= $key . ': ' . $value;
             } else {
-                throw new WrongHeadersException('Wrong headers array exception: ' . var_export($resource, true));
+                throw new WrongHeadersException('Wrong headers array exception: ' . var_export($headers, true));
             }
         }
         return $headersArray;
@@ -122,13 +128,13 @@ abstract class ClientAbstract implements ClientInterface
             CURLOPT_HTTPHEADER => $headersArray,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_CONNECTTIMEOUT => $this->options[ClientInterface::PARAMETER_CONNECTION_TIMEOUT],
-            CURLOPT_TIMEOUT => $this->options[ClientInterface::PARAMETER_TIMEOUT]
+            CURLOPT_CONNECTTIMEOUT => $this->options[self::PARAMETER_CONNECTION_TIMEOUT],
+            CURLOPT_TIMEOUT => $this->options[self::PARAMETER_TIMEOUT]
         ];
         $curlOptionsArray = $this->getClientCurlOptions() + $curlOptionsArray;
 
         $maxExecutionTime = (int)ini_get('max_execution_time');
-        $combinedCurlTime = $this->options[ClientInterface::PARAMETER_CONNECTION_TIMEOUT] + $this->options[ClientInterface::PARAMETER_TIMEOUT];
+        $combinedCurlTime = $this->options[self::PARAMETER_CONNECTION_TIMEOUT] + $this->options[self::PARAMETER_TIMEOUT];
         if (
             $maxExecutionTime !== 0 &&
             $maxExecutionTime < $combinedCurlTime
@@ -153,8 +159,12 @@ abstract class ClientAbstract implements ClientInterface
     }
 
     abstract protected function getClientResource() : array;
+
     abstract protected function getClientQuery() : array;
+
     abstract protected function getClientHeaders() : array;
+
     abstract protected function getClientPayload() : array;
+
     abstract protected function getClientCurlOptions() : array;
 }

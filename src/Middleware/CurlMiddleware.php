@@ -1,7 +1,7 @@
 <?php
-namespace RestClient\Middleware;
+namespace HttpClient\Middleware;
 
-use RestClient\Middleware\MiddlewareAbstract;
+use HttpClient\Middleware\MiddlewareAbstract;
 
 class CurlMiddleware extends MiddlewareAbstract
 {

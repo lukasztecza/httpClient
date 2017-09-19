@@ -1,25 +1,23 @@
 <?php
-namespace RestClient\Middleware;
+namespace HttpClient\Middleware;
 
-use RestClient\Middleware\MiddlewareAbstract;
-use RestClient\Client\ClientInterface;
+use HttpClient\Middleware\MiddlewareAbstract;
 
 class XmlMiddleware extends MiddlewareAbstract
 {
     public function process(array $curlOptionsArray) : array
     {
-        if ($this->options[ClientInterface::PARAMETER_ENCODE_REQUEST]) {
-            $curlOptionsArray[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
+        if ($this->options[self::PARAMETER_ENCODE_REQUEST]) {
+            $curlOptionsArray[CURLOPT_HTTPHEADER][] = 'Content-Type: application/xml';
             if (isset($curlOptionsArray[CURLOPT_POSTFIELDS])) {
                 $curlOptionsArray[CURLOPT_POSTFIELDS] = $this->buildXmlPayload(
                     $curlOptionsArray[CURLOPT_POSTFIELDS],
-                    $this->options[ClientInterface::PARAMETER_ROOT_NODE]
+                    $this->options[self::PARAMETER_ROOT_NODE]
                 );
             }
         }
 
         $response = $this->next->process($curlOptionsArray);
-
         if (!empty($response['body'])) {
             $xml = new \SimpleXMLElement($response['body']);
             $response['body'] = json_decode(json_encode($xml), true);

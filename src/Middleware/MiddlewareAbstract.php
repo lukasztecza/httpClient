@@ -1,10 +1,15 @@
 <?php
-namespace RestClient\Middleware;
+namespace HttpClient\Middleware;
 
-use RestClient\Middleware\MiddlewareInterface;
+use HttpClient\Middleware\MiddlewareInterface;
 
 abstract class MiddlewareAbstract implements MiddlewareInterface
 {
+    const PARAMETER_ENCODE_REQUEST = 'encodeRequest';
+    const PARAMETER_ROOT_NODE = 'rootNode';
+
+    const DEFAULT_ROOT_NODE = 'Request';
+
     protected $next;
     protected $options;
 
