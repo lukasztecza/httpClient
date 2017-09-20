@@ -4,7 +4,6 @@ Http client using curl, based on middleware and factory patterns.
 ### How to use
 Create factory object and pass it configuration array with structure:
 ```
-<?php
 new HttpClient\ClientFactory;
 
 $clientFactory = new ClientFactory([
