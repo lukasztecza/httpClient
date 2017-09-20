@@ -83,7 +83,7 @@ abstract class ClientAbstract implements ClientInterface
         $resource = $this->getClientResource() + $resource;
         $resourceString = '';
         foreach ($resource as $key => $value) {
-            if (is_string($key) && is_string($value)) {
+            if (is_string($key) && (is_string($value) || is_int($value))) {
                 $resourceString .= '/' . $key . '/' . $value;
             } elseif (is_string($key)) {
                 $resourceString .= '/' . $key;
