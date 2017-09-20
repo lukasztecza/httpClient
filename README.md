@@ -55,6 +55,7 @@ $headers = [
 $payload = [
     'name' => 'John'
 ];
-//will build request with all passed data note that get() and delete() will not pass payload (post(), put(), patch() will)
+//will build request with all passed data note that get() and delete() will not pass payload
+//post(), put(), patch() will pass the payload
 $firstMinimalClient->post($resource, $query, $headers, $payload);
 ```
