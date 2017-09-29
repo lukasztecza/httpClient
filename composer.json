@@ -1,0 +1,22 @@
+{
+    "name": "lukasztecza/httpClient",
+    "description": "Minimal PHP http client",
+    "keywords": ["php", "http", "request", "curl", "factory", "middleware"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lukasz Tecza",
+            "email": "lukasztecza.pl@gmail.com",
+            "homepage": "http://lukasztecza.pl"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.3.0"
+    },
+    "autoload": {
+        "psr-4": { "HttpClient\\": "src/" }
+    }
+}
