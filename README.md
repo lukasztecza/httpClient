@@ -20,7 +20,7 @@ $clientFactory = new ClientFactory([
         ],
         'middlewares' => [
             [
-                'class' => 'HttpClient\Middlewares\XmlMiddleware',
+                'class' => 'HttpClient\Middleware\XmlMiddleware',
                 'options' => [
                     'encodeRequest' => false,
                     'rootNode' => 'SomeApiRelatedRootXmlNode'
