@@ -123,7 +123,7 @@ abstract class ClientAbstract implements ClientInterface
     protected function prepareAndCall(string $verb, string $resourceString, string $queryString, array $headersArray, array $payloadArray = []) : array
     {
         $curlOptionsArray = [
-            CURLOPT_URL => $this->uri . $resourceString . '?' . $queryString,
+            CURLOPT_URL => $this->uri . $resourceString . (!empty($queryString) ? ('?' . $queryString) : ''),
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => $headersArray,
             CURLOPT_RETURNTRANSFER => true,
