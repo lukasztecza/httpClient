@@ -83,9 +83,9 @@ abstract class ClientAbstract implements ClientInterface
         $resource = $this->getClientResource() + $resource;
         $resourceString = '';
         foreach ($resource as $key => $value) {
-            if (is_string($key) && (is_string($value) || is_int($value))) {
+            if ((is_string($key) || is_int($key)) && (is_string($value) || is_int($value))) {
                 $resourceString .= '/' . $key . '/' . $value;
-            } elseif (is_string($key)) {
+            } elseif (is_string($key) || is_int($key)) {
                 $resourceString .= '/' . $key;
             } else {
                 throw new WrongResourceException('Wrong resource array exception: ' . var_export($resource, true));
