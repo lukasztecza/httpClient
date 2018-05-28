@@ -111,7 +111,7 @@ abstract class ClientAbstract implements ClientInterface
         $headers = $this->getClientHeaders() + $headers;
         $headersArray = [];
         foreach ($headers as $key => $value) {
-            if (is_string($key) && is_string($value)) {
+            if (is_string($key) && (is_string($value)|| is_int($value))) {
                 $headersArray[] .= $key . ': ' . $value;
             } else {
                 throw new WrongHeadersException('Wrong headers array exception: ' . var_export($headers, true));
@@ -158,13 +158,28 @@ abstract class ClientAbstract implements ClientInterface
         return $this->currentMiddleware->process($curlOptionsArray);
     }
 
-    abstract protected function getClientResource() : array;
+    protected function getClientResource() : array
+    {
+        return [];
+    }
 
-    abstract protected function getClientQuery() : array;
+    protected function getClientQuery() : array
+    {
+        return [];
+    }
 
-    abstract protected function getClientHeaders() : array;
+    protected function getClientHeaders() : array
+    {
+        return [];
+    }
 
-    abstract protected function getClientPayload() : array;
+    protected function getClientPayload() : array
+    {
+        return [];
+    }
 
-    abstract protected function getClientCurlOptions() : array;
+    protected function getClientCurlOptions() : array
+    {
+        return [];
+    }
 }
