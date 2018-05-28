@@ -3,17 +3,17 @@ Http client using curl, based on middleware and factory patterns.
 
 ### Basic usage
 - assuming that your app is `myRepo/myApp` then include using composer:
-```
+```json
 {
     "name": "myRepo/myApp",
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/lukasztecza/tinyAppBase"
+            "url": "https://github.com/lukasztecza/httpClient"
        }
     ],
     "require": {
-        "lukasztecza/tinyAppBase": "dev-master"
+        "lukasztecza/httpClient": "dev-master"
     },
     "autoload": {
         "psr-4": { "MyApp\\": "src/" }
@@ -55,7 +55,7 @@ $clientFactory = new ClientFactory([
 ]);
 ```
 - get client using factory
-```
+```php
 $firstMinimalClient = $clientFactory->getClient('firstMinimalClient');
 //will send simple get request
 $firstMinimalClient->get();
