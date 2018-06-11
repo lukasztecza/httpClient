@@ -1,8 +1,26 @@
 # httpClient
 Http client using curl, based on middleware and factory patterns.
 
-### How to use
-Create factory object and pass it configuration array with structure:
+### Basic usage
+- assuming that your app is `myRepo/myApp` then include using composer:
+```json
+{
+    "name": "myRepo/myApp",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/lukasztecza/httpClient"
+       }
+    ],
+    "require": {
+        "lukasztecza/httpClient": "dev-master"
+    },
+    "autoload": {
+        "psr-4": { "MyApp\\": "src/" }
+    }
+}
+```
+- create factory object and pass it configuration array with structure:
 ```php
 new HttpClient\ClientFactory;
 
@@ -35,7 +53,9 @@ $clientFactory = new ClientFactory([
         ]
     ]
 ]);
-
+```
+- get client using factory
+```php
 $firstMinimalClient = $clientFactory->getClient('firstMinimalClient');
 //will send simple get request
 $firstMinimalClient->get();
